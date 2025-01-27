@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: meu_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Root@123
+      - MYSQL_DATABASE=MeuBanco
+      - MYSQL_USER=meuusuario
+      - MYSQL_PASSWORD=MinhaSenha
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: minha_api
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+
+volumes:
+  dbdata:
