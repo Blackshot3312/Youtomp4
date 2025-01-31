@@ -6,6 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using DotNetEnv;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Youtomp4
 {
@@ -40,8 +43,6 @@ namespace Youtomp4
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-
-
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
@@ -49,8 +50,6 @@ namespace Youtomp4
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-
-
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(apiKey)),
                     ValidateIssuer = false,
                     ValidateAudience = false
@@ -62,36 +61,32 @@ namespace Youtomp4
 
             builder.Services.AddSingleton<YoutubeService>();
 
-            builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Minha API",
-        Version = "v1"
-    });
+            // Adicione o suporte ao MVC e API Explorer
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Minha API", Version = "v1" });
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Insira o token JWT como: Bearer {token}",
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
+                var securitySchema = new OpenApiSecurityScheme
+                {
+                    Description = "Bearer {token}",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                };
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-        {
-            new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-});
+                options.AddSecurityDefinition("Bearer", securitySchema);
 
+                var securityRequirement = new OpenApiSecurityRequirement
+                {
+                    { securitySchema, new[] { "Bearer" } }
+                };
+
+                options.AddSecurityRequirement(securityRequirement);
+            });
 
             var app = builder.Build();
 
@@ -105,7 +100,6 @@ namespace Youtomp4
             }
 
             app.Run();
-
         }
     }
 }
