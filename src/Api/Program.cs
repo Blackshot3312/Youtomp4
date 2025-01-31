@@ -7,19 +7,14 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using DotNetEnv;
 
-
 namespace Youtomp4
 {
     public class Program
     {
-
-
-
         public static void Main(string[] args)
         {
-
             Env.Load();
-            Console.WriteLine("Arquivo .env carregado");
+            Console.WriteLine("A API KEY É: " + Environment.GetEnvironmentVariable("API_KEY"));
 
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -29,7 +24,6 @@ namespace Youtomp4
             {
                 throw new ArgumentNullException("API_KEY", "A chave não está definida");
             }
-
 
             // Área do banco de dados
             if (string.IsNullOrEmpty(connectionString))
@@ -68,28 +62,36 @@ namespace Youtomp4
 
             builder.Services.AddSingleton<YoutubeService>();
 
-            builder.Services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Minha API", Version = "v1" });
+            builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Minha API",
+        Version = "v1"
+    });
 
-                var securitySchema = new OpenApiSecurityScheme
-                {
-                    Description = "Bearer {token}",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT"
-                };
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Insira o token JWT como: Bearer {token}",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
 
-                options.AddSecurityDefinition("Bearer", securitySchema);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
-                var securityRequirement = new OpenApiSecurityRequirement {
-        { securitySchema, new[] { "Bearer" } }
-    };
-
-                options.AddSecurityRequirement(securityRequirement);
-            });
 
             var app = builder.Build();
 

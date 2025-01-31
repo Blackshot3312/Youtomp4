@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Data;
 using Microsoft.AspNetCore.Mvc;
 using Services;
-using BCrypt.Net;
 using Models;
 
 [ApiController]

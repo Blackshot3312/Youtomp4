@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using YoutubeExplode;
-using YoutubeExplode.Videos;
 using Services;
 
 [ApiController]

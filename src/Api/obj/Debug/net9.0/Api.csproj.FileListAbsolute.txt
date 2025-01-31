@@ -119,6 +119,7 @@ A:\Projetos\Youtomp4\src\Api\obj\Debug\net9.0\Api.AssemblyInfo.cs
 A:\Projetos\Youtomp4\src\Api\obj\Debug\net9.0\Api.csproj.CoreCompileInputs.cache
 A:\Projetos\Youtomp4\src\Api\obj\Debug\net9.0\Api.MvcApplicationPartsAssemblyInfo.cs
 A:\Projetos\Youtomp4\src\Api\obj\Debug\net9.0\Api.MvcApplicationPartsAssemblyInfo.cache
+A:\Projetos\Youtomp4\src\Api\obj\Debug\net9.0\Api.sourcelink.json
 A:\Projetos\Youtomp4\src\Api\obj\Debug\net9.0\scopedcss\bundle\Api.styles.css
 A:\Projetos\Youtomp4\src\Api\obj\Debug\net9.0\staticwebassets.build.json
 A:\Projetos\Youtomp4\src\Api\obj\Debug\net9.0\staticwebassets.development.json
